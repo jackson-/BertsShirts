@@ -7,11 +7,11 @@ class User:
 		self.first_name = first_name
 		self.last_name = last_name
 
-	def create_account(self):
-
 
 class Customer(User):
-	pass
+	
+	def buy(self):
+		
 
 
 class Artist(User):
@@ -35,3 +35,8 @@ class Transactions:
 
 	def __init__(self):
 		pass
+
+
+class Subscriptitons:
+	 def __init__(self):
+	 	pass
