@@ -1,5 +1,5 @@
 import sqlite3
-import create_db
+
 
 ## default values
 defaultdb = "shirt.db"
@@ -75,10 +75,27 @@ class DB:
 			return(user)
 
 	@staticmethod
-	def create_user(first_name, last_name, username, user_type, db=defaultdb):
+	def create_artist(first_name, last_name, username, user_type, db=defaultdb):
 		conn = sqlite3.connect(db)
 		c = conn.cursor()
-		statement = "INSERT INTO users(first_name, last_name, username, user_type) VALUES(?, ?, ?); "
-		c.execute(statement, (name, created_at, permission_level,))
+		statement = "INSERT INTO users(first_name, last_name, username, user_type) VALUES(?, ?, ?, ?); "
+		c.execute(statement, (first_name, last_name, username, user_type,))
 		conn.commit()
 		conn.close()
+
+	@staticmethod
+	def create_customer(first_name, last_name, username, user_type, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "INSERT INTO users(first_name, last_name, username, user_type) VALUES(?, ?, ?, ?); "
+		c.execute(statement, (first_name, last_name, username, user_type,))
+		conn.commit()
+		conn.close()
+
+	@staticmethod
+	def check_user_type(user_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		c.execute("SELECT user_type FROM users WHERE id = (?)", (user_id, ))
+		user_type = c.fetchone()
+		return(user_type)

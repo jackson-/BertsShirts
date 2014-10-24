@@ -10,7 +10,14 @@ class Controller:
 			if self.userobj == None:
 				self.registration()
 			else:
-				self.main_menu()
+				self.user_type = DB.check_user_type(self.userobj[0])[0]
+				if self.user_type == 'artist':
+					self.userobj = Artist(self.user_type)
+					self.main_menu_artist()
+				elif self.user_type == 'customer':
+					self.userobj = Customer(self.user_type)
+					self.main_menu_customer()
+
 
 
 	def registration(self):
@@ -18,21 +25,56 @@ class Controller:
 			choice = Views.user_prompt("You do not seem to have an account with us. Would you like to make one? Y/N: ")
 			if choice == 'y' or choice == 'Y':
 				self.user_type = Views.user_prompt("Are you an artist or a customer?: ")
-				if self.user_type == 'artist' or self.user_type == 'Artist' or self.user_type == 'ARTIST':
+				if self.user_type == 'artist':
 					self.first_name = Views.user_prompt("What is your first name?: ")
 					self.last_name = Views.user_prompt("What is your last name?: ")
 					DB.create_artist(self.first_name, self.last_name, self.username, self.user_type)
-					print("This works")
-				elif self.user_type == 'customer' or self.user_type == 'Customer' or self.user_type == 'CUSTOMER':
+					self.userobj = Artist(self.user_type)
+					self.main_menu_artist()
+				elif self.user_type == 'customer':
 					self.first_name = Views.user_prompt("What is your first name?: ")
 					self.last_name = Views.user_prompt("What is your last name?: ")
 					DB.create_customer(self.first_name, self.last_name, self.username, self.user_type)
-					print("This works")
+					self.userobj = Customer(self.user_type)
+					self.main_menu_customer()
 				else:
-					print("That is not a valid answer. Try again.")
+					Views.invalid_choice()
 					self.registration()
 			else:
 				self.sign_in()
+
+	def main_menu_artist(self):
+		while(True):
+			choice = Views.main_menu_artist()
+			if choice ==  '1':
+				pass
+			elif choice ==  '2':
+				pass
+			elif choice ==  '3':
+				pass
+			elif choice ==  '4':
+				self.sign_in()
+			else:
+				Views.invalid_choice()
+
+
+
+	def main_menu_customer(self):
+		while(True):
+			choice = Views.main_menu_customer()
+			if choice ==  '1':
+				pass
+			elif choice ==  '2':
+				pass
+			elif choice ==  '3':
+				pass
+			elif choice ==  '4':
+				pass
+			elif choice ==  '5':
+				self.sign_in()
+			else:
+				Views.invalid_choice()
+
 
 shirt_con = Controller()
 shirt_con.sign_in()
