@@ -11,11 +11,13 @@ class User:
 class Customer(User):
 	
 	def buy(self):
-		
+		pass
 
 
 class Artist(User):
-	pass
+	
+	def create_design(self):
+		pass
 
 
 class Design:
@@ -30,13 +32,3 @@ class Notification:
 	def __init__(self, message):
 		self.message = message
 
-
-class Transactions:
-
-	def __init__(self):
-		pass
-
-
-class Subscriptitons:
-	 def __init__(self):
-	 	pass

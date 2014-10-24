@@ -87,7 +87,9 @@ def create_transactions_table():
 			`id` INTEGER,
 			`customer_id` INTEGER,
 			`artist_id` INTEGER,
+			`design_id` INTEGER,
 			`price_paid` INT,
+			FOREIGN KEY (design_id) REFERENCES designs(id),
 			FOREIGN KEY (customer_id) REFERENCES users(id),
 			FOREIGN KEY (artist_id) REFERENCES users(id),
 			PRIMARY KEY (`id`)
