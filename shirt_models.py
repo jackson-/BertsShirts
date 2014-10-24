@@ -39,8 +39,8 @@ class Artist(User):
 		self.user_type = user_type
 
 	
-	def create_design(self):
-		pass
+	def create_design(self, title, artist_id, price):
+		DB.create_design(title, artist_id, price)
 
 
 	def delete_notification(self, notificaton_id):
@@ -89,6 +89,15 @@ class DB:
 		c = conn.cursor()
 		statement = "INSERT INTO users(first_name, last_name, username, user_type) VALUES(?, ?, ?, ?); "
 		c.execute(statement, (first_name, last_name, username, user_type,))
+		conn.commit()
+		conn.close()
+
+	@staticmethod
+	def create_design(title, artist_id, price, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "INSERT INTO designs(title, artist_id, price) VALUES(?, ?, ?); "
+		c.execute(statement, (title, artist_id, price,))
 		conn.commit()
 		conn.close()
 
