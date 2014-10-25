@@ -182,16 +182,18 @@ class DB:
 		if len(inventory_list) == 0:
 			return None
 		else:
-			for index in inventory_list:
-				statement = "SELECT title FROM designs WHERE id = (?);"
-				c.execute(statement, (index[1],))
-				title_list.append(c.fetchone()[0])
-				statement = "SELECT artist_id FROM designs WHERE id = (?);"
-				c.execute(statement, (index[0],))
-				artist_id = c.fetchone()[0]
-				statement = "SELECT DISTINCT first_name, last_name FROM users WHERE id = (?);"
-				c.execute(statement, (artist_id,))
-				name_list.append(c.fetchone())
-			return(title_list, name_list)
+			return(inventory_list)
 		conn.commit()
 		conn.close()
+
+
+	@staticmethod
+	def get_all_artists(db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT first_name, last_name FROM users WHERE user_type = 'artist';"
+		c.execute(statement,)
+		name_list = c.fetchall()
+		print(name_list)
+
+# DB.get_all_artists()

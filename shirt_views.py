@@ -97,3 +97,8 @@ class Views:
 			Artist Name: {1}
 
 			'''.format(title_list[i], name_list[i]))
+
+
+	@staticmethod
+	def subscribe_to_artist(artist_list):
+		pass
