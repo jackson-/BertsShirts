@@ -22,8 +22,8 @@ class Customer(User):
 		pass
 
 
-	def add_to_inventory(self, design_id):
-		pass
+	def add_to_inventory(self, design_id, customer_id):
+		DB.add_to_inventory(design_id, customer_id)
 
 
 	def delete_notification(self, notificaton_id):
@@ -39,8 +39,8 @@ class Artist(User):
 		self.user_type = user_type
 
 	
-	def create_design(self, title, artist_id, price):
-		DB.create_design(title, artist_id, price)
+	def create_design(self, title, artist_id, artist_name, price):
+		DB.create_design(title, artist_id, artist_name, price)
 
 
 	def delete_notification(self, notificaton_id):
@@ -93,13 +93,32 @@ class DB:
 		conn.close()
 
 	@staticmethod
-	def create_design(title, artist_id, price, db=defaultdb):
+	def create_design(title, artist_id, artist_name, price, purchase_times=0, db=defaultdb):
 		conn = sqlite3.connect(db)
 		c = conn.cursor()
-		statement = "INSERT INTO designs(title, artist_id, price) VALUES(?, ?, ?); "
-		c.execute(statement, (title, artist_id, price,))
+		statement = "INSERT INTO designs(title, artist_id, artist_name, price, purchase_times) VALUES(?, ?, ?, ?, ?); "
+		c.execute(statement, (title, artist_id, artist_name, price, purchase_times,))
 		conn.commit()
 		conn.close()
+
+	@staticmethod
+	def create_notification(user_id, message, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "INSERT INTO notifications(user_id, message) VALUES(?, ?); "
+		c.execute(statement, (user_id, message,))
+		conn.commit()
+		conn.close()
+
+	@staticmethod
+	def add_to_inventory(design_id, customer_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "INSERT INTO inventory(design_id, customer_id) VALUES(?, ?); "
+		c.execute(statement, (design_id, customer_id,))
+		conn.commit()
+		conn.close()
+
 
 	@staticmethod
 	def check_user_type(user_id, db=defaultdb):
@@ -108,3 +127,71 @@ class DB:
 		c.execute("SELECT user_type FROM users WHERE id = (?)", (user_id, ))
 		user_type = c.fetchone()
 		return(user_type)
+
+	@staticmethod
+	def get_design_stats(artist_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT title, purchase_times FROM designs WHERE artist_id = (?); "
+		c.execute(statement, (artist_id,))
+		design_stats = c.fetchall()
+		if len(design_stats) == 0:
+			return None
+		else:
+			return(design_stats)
+		conn.commit()
+		conn.close()
+
+	@staticmethod
+	def get_notifications(user_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT message FROM notifications WHERE user_id = (?); "
+		c.execute(statement, (user_id,))
+		messages = c.fetchall()
+		if len(messages) == 0:
+			return None
+		else:
+			return(messages)
+		conn.commit()
+		conn.close()
+
+	@staticmethod
+	def get_all_designs(db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT id, artist_name, title, price FROM designs;"
+		c.execute(statement,)
+		design_list = c.fetchall()
+		if len(design_list) == 0:
+			return None
+		else:
+			return(design_list)
+		conn.commit()
+		conn.close()
+
+	@staticmethod
+	def get_inventory(user_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT * FROM inventory WHERE customer_id = (?);"
+		c.execute(statement, (user_id,))
+		inventory_list = c.fetchall()
+		title_list = []
+		name_list = []
+		if len(inventory_list) == 0:
+			return None
+		else:
+			for index in inventory_list:
+				statement = "SELECT title FROM designs WHERE id = (?);"
+				c.execute(statement, (index[1],))
+				title_list.append(c.fetchone()[0])
+				statement = "SELECT artist_id FROM designs WHERE id = (?);"
+				c.execute(statement, (index[0],))
+				artist_id = c.fetchone()[0]
+				statement = "SELECT DISTINCT first_name, last_name FROM users WHERE id = (?);"
+				c.execute(statement, (artist_id,))
+				name_list.append(c.fetchone())
+			return(title_list, name_list)
+		conn.commit()
+		conn.close()

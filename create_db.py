@@ -39,8 +39,10 @@ def create_designs_table():
 	c.execute("""CREATE TABLE `designs` (
 			`id` INTEGER,
 			`artist_id` INTEGER,
+			`artist_name` TEXT,
 			`title` TEXT,
 			`price` INT,
+			`purchase_times` INT,
 			PRIMARY KEY (`id`),
 			FOREIGN KEY (artist_id) REFERENCES users(id)
 			)""")
