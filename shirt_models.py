@@ -18,11 +18,7 @@ class Customer(User):
 		self.user_type = user_type
 
 
-	def buy(self, design_id):
-		pass
-
-
-	def add_to_inventory(self, design_id, customer_id):
+	def buy(self, design_id, customer_id):
 		DB.add_to_inventory(design_id, customer_id)
 
 
@@ -156,6 +152,36 @@ class DB:
 		conn.commit()
 		conn.close()
 
+
+	@staticmethod
+	def get_artist_name(artist_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT * FROM users WHERE user_type = 'artist'; "
+		c.execute(statement, (artist_id,))
+		messages = c.fetchall()
+		if len(messages) == 0:
+			return None
+		else:
+			return(messages)
+		conn.commit()
+		conn.close()
+
+	@staticmethod
+	def get_design_info(design_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT artist_name, title, price FROM designs;"
+		c.execute(statement,)
+		design_list = c.fetchall()
+		if len(design_list) == 0:
+			return None
+		else:
+			return(design_list)
+		conn.commit()
+		conn.close()
+
+
 	@staticmethod
 	def get_all_designs(db=defaultdb):
 		conn = sqlite3.connect(db)
@@ -174,15 +200,15 @@ class DB:
 	def get_inventory(user_id, db=defaultdb):
 		conn = sqlite3.connect(db)
 		c = conn.cursor()
-		statement = "SELECT * FROM inventory WHERE customer_id = (?);"
+		statement = "SELECT design_id FROM inventory WHERE customer_id = (?);"
 		c.execute(statement, (user_id,))
-		inventory_list = c.fetchall()
-		title_list = []
-		name_list = []
-		if len(inventory_list) == 0:
-			return None
-		else:
-			return(inventory_list)
+		id_list = c.fetchall()
+		design_list = []
+		counter = 0
+		for i in range(1):
+			counter+=1
+			design_list.append(DB.get_design_info(id_list[counter][0][0]))
+			print(design_list)
 		conn.commit()
 		conn.close()
 
@@ -196,4 +222,5 @@ class DB:
 		name_list = c.fetchall()
 		print(name_list)
 
-# DB.get_all_artists()
+# print(DB.get_artist_name())
+DB.get_inventory(2)

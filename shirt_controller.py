@@ -82,15 +82,15 @@ class Controller:
 			choice = Views.main_menu_customer()
 			if choice == '1':
 				design_list = DB.get_all_designs()
-			if design_list == None:
-					print("I'm sorry the store is empty at this time.")
-			else:
-				choice = Views.view_store(design_list)
-				if choice.isdigit():
-					design_id = design_list[int(choice)-1][0]
-					self.userobj.add_to_inventory(design_id, self.my_id)
+				if design_list == None:
+						print("I'm sorry the store is empty at this time.")
 				else:
-					Views.invalid_choice()
+					choice = Views.view_store(design_list)
+					if choice.isdigit():
+						design_id = design_list[int(choice)-1][0]
+						self.userobj.buy(design_id, self.my_id)
+					else:
+						Views.invalid_choice()
 			elif choice == '2':
 				inventory_list = DB.get_inventory(self.my_id)
 				if inventory_list == None:

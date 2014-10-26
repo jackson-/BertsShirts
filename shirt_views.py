@@ -84,9 +84,10 @@ class Views:
 	def inventory_view(inventory_list):
 		name_list = []
 		title_list = []
-		for value in inventory_list[1]:
-			full_name = value[0] + " " + value[1]
-			name_list.append(full_name)
+		for value in inventory_list:
+			print(value)
+			# full_name = value[0] + " " + value[1]
+			# name_list.append(full_name)
 		for value in inventory_list[0]:
 			title_list.append(value)
 		print("These are the designs in your inventory: ")
