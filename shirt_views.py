@@ -82,24 +82,23 @@ class Views:
 
 	@staticmethod
 	def inventory_view(inventory_list):
-		name_list = []
-		title_list = []
-		for value in inventory_list:
-			print(value)
-			# full_name = value[0] + " " + value[1]
-			# name_list.append(full_name)
-		for value in inventory_list[0]:
-			title_list.append(value)
-		print("These are the designs in your inventory: ")
-		for i in range(len(name_list)):
-			print('''
+		print("Here is you inventory: \n")
+		for index in inventory_list:
+			for value in range(1):
+				print('''
 
 			Design Title: {0}
 			Artist Name: {1}
 
-			'''.format(title_list[i], name_list[i]))
+				'''.format(index[0], index[1]))
 
 
 	@staticmethod
 	def subscribe_to_artist(artist_list):
-		pass
+		for index in artist_list:
+			print('''
+			First Name: {0}
+			Last Name: {1}
+
+
+				'''.format(index[0], index[1]))

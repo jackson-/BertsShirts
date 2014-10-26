@@ -25,8 +25,8 @@ class Customer(User):
 	def delete_notification(self, notificaton_id):
 		pass
 
-	def subscribe(self, artist_id):
-		pass
+	def subscribe(self, customer_id, artist_id):
+		DB.create_subscription(customer_id, artist_id)
 
 
 class Artist(User):
@@ -78,6 +78,16 @@ class DB:
 		c.execute(statement, (first_name, last_name, username, user_type,))
 		conn.commit()
 		conn.close()
+
+	@staticmethod
+	def create_subscription(customer_id, artist_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "INSERT INTO subscriptions(customer_id, artist_id) VALUES(?, ?); "
+		c.execute(statement, (customer_id, artist_id,))
+		conn.commit()
+		conn.close()
+
 
 	@staticmethod
 	def create_customer(first_name, last_name, username, user_type, db=defaultdb):
@@ -152,6 +162,16 @@ class DB:
 		conn.commit()
 		conn.close()
 
+	@staticmethod
+	def delete_notification(notification_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "DELETE * FROM notifications WHERE id = (?); "
+		c.execute(statement, (notification_id,))
+		notifications = c.fetchall()
+		conn.commit()
+		conn.close()
+
 
 	@staticmethod
 	def get_artist_name(artist_id, db=defaultdb):
@@ -167,17 +187,18 @@ class DB:
 		conn.commit()
 		conn.close()
 
+
 	@staticmethod
-	def get_design_info(design_id, db=defaultdb):
+	def get_artist_id(first_name, last_name, db=defaultdb):
 		conn = sqlite3.connect(db)
 		c = conn.cursor()
-		statement = "SELECT artist_name, title, price FROM designs;"
-		c.execute(statement,)
-		design_list = c.fetchall()
-		if len(design_list) == 0:
+		statement = "SELECT id FROM users WHERE user_type = 'artist' AND first_name = (?) AND last_name = (?); "
+		c.execute(statement, (first_name, last_name,))
+		ids = c.fetchall()
+		if len(ids) == 0:
 			return None
 		else:
-			return(design_list)
+			return(ids)
 		conn.commit()
 		conn.close()
 
@@ -200,27 +221,49 @@ class DB:
 	def get_inventory(user_id, db=defaultdb):
 		conn = sqlite3.connect(db)
 		c = conn.cursor()
-		statement = "SELECT design_id FROM inventory WHERE customer_id = (?);"
+		statement = "SELECT title, artist_name FROM designs INNER JOIN inventory ON designs.id = inventory.design_id AND inventory.customer_id = (?);"
 		c.execute(statement, (user_id,))
-		id_list = c.fetchall()
-		design_list = []
-		counter = 0
-		for i in range(1):
-			counter+=1
-			design_list.append(DB.get_design_info(id_list[counter][0][0]))
-			print(design_list)
-		conn.commit()
+		info = c.fetchall()
+		if len(info) == 0:
+			return(None)
+		else:
+			return(info)
 		conn.close()
 
 
 	@staticmethod
-	def get_all_artists(db=defaultdb):
+	def get_all_artist_names(db=defaultdb):
 		conn = sqlite3.connect(db)
 		c = conn.cursor()
 		statement = "SELECT first_name, last_name FROM users WHERE user_type = 'artist';"
 		c.execute(statement,)
 		name_list = c.fetchall()
-		print(name_list)
+		return(name_list)
 
-# print(DB.get_artist_name())
-DB.get_inventory(2)
+	@staticmethod
+	def get_subscriptions(artist_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT customer_id FROM subscriptions WHERE artist_id = (?);"
+		c.execute(statement, (artist_id,))
+		subscription_list = c.fetchall()
+		return(subscription_list)
+
+	@staticmethod
+	def update_purchase_times(design_id, db=defaultdb):
+		conn = sqlite3.connect(db)
+		c = conn.cursor()
+		statement = "SELECT purchase_times FROM designs WHERE id = (?);"
+		c.execute(statement, (design_id,))
+		purchases = c.fetchall()
+		if len(purchases) == 0:
+			return(None)
+		else:
+			purchases = purchases[0][0]
+			purchases += 1
+			print(purchases)
+		statement = "UPDATE designs SET purchase_times = (?) WHERE id = (?)"
+		c.execute(statement, (purchases, design_id,))
+		conn.commit()
+		conn.close()
+
