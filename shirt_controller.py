@@ -7,26 +7,18 @@ class Controller:
 		while(True):
 			self.username = Views.sign_in()
 			self.user = DB.load_user(self.username)
+			print(self.user)
 			if self.user == None:
 				self.registration()
 			else:
-				# self.userobj.my_id = self.user[0]
-				# self.first_name = self.userobj[1]
-				# self.last_name = self.userobj[2]
 				self.user_type = DB.check_user_type(self.user[0])[0]
 				if self.user_type == 'artist':
-					self.userobj = Artist(self.user_type)
-					self.userobj.my_id = self.user[0]
-					self.userobj.first_name = self.user[1]
-					self.userobj.last_name = self.user[2]
+					self.userobj = Artist(my_id=self.user[0], first_name=self.user[1], last_name=self.user[2], user_type=self.user_type, username=self.username)
+					print(self.userobj.first_name)
 					self.main_menu_artist()
 				elif self.user_type == 'customer':
-					self.userobj = Customer(self.user_type)
-					self.userobj.my_id = self.user[0]
-					self.userobj.first_name = self.user[1]
-					self.userobj.last_name = self.user[2]
+					self.userobj = Customer(my_id=self.user[0], first_name=self.user[1], last_name=self.user[2], user_type=self.user_type, username=self.username)
 					self.main_menu_customer()
-
 
 
 	def registration(self):
@@ -35,14 +27,11 @@ class Controller:
 			if choice == 'y' or choice == 'Y':
 				self.user_type = Views.user_prompt("Are you an artist or a customer?: ")
 				if self.user_type == 'artist':
-					self.first_name = Views.user_prompt("What is your first name?: ")
-					self.last_name = Views.user_prompt("What is your last name?: ")
-					DB.create_artist(self.first_name, self.last_name, self.username, self.user_type)
+					first_name = Views.user_prompt("What is your first name?: ")
+					last_name = Views.user_prompt("What is your last name?: ")
+					DB.create_artist(first_name, last_name, self.username, self.user_type)
 					self.user = DB.load_user(self.username)
-					self.userobj = Artist(self.user_type)
-					self.userobj.my_id = self.user[0]
-					self.userobj.first_name = self.user[1]
-					self.userobj.last_name = self.user[2]
+					self.userobj = Artist(my_id=self.user[0], first_name=self.user[1], last_name=self.user[2], user_type=self.user_type, username=self.username)
 					self.main_menu_artist()
 
 				elif self.user_type == 'customer':
@@ -50,10 +39,7 @@ class Controller:
 					self.last_name = Views.user_prompt("What is your last name?: ")
 					DB.create_customer(self.first_name, self.last_name, self.username, self.user_type)
 					self.user = DB.load_user(self.username)
-					self.userobj = Customer(self.user_type)
-					self.userobj.my_id = self.user[0]
-					self.userobj.first_name = self.user[1]
-					self.userobj.last_name = self.user[2]
+					self.userobj = Customer(my_id=self.user[0], first_name=self.user[1], last_name=self.user[2], user_type=self.user_type, username=self.username)
 					self.main_menu_customer()
 				else:
 					Views.invalid_choice()
@@ -65,6 +51,7 @@ class Controller:
 		while(True):
 			choice = Views.main_menu_artist()
 			if choice ==  '1':
+				print(self.userobj.first_name)
 				title = Views.user_prompt("What is the title of your new design?: ")
 				price = Views.user_prompt("What is the price of your new design?: ")
 				self.userobj.create_design(title, self.userobj.my_id, self.userobj.first_name + " " + self.userobj.last_name, price)

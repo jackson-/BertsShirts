@@ -6,16 +6,18 @@ defaultdb = "shirt.db"
 
 class User:
 
-	def __init__(self, username, first_name, last_name):
-		self.username = username
-		self.first_name = first_name
-		self.last_name = last_name
+	def __init__(self, **kwargs):
+		self.username = kwargs['username']
+		self.first_name = kwargs['first_name']
+		self.last_name = kwargs['last_name']
 
 
 class Customer(User):
 	
-	def __init__(self, user_type):
-		self.user_type = user_type
+	def __init__(self, **kwargs):
+		super(Customer, self).__init__(**kwargs)
+		self.user_type = kwargs['user_type']
+		self.my_id = keargs['my_id']
 
 
 	def buy(self, design_id, customer_id):
@@ -31,8 +33,10 @@ class Customer(User):
 
 class Artist(User):
 
-	def __init__(self, user_type):
-		self.user_type = user_type
+	def __init__(self, **kwargs):
+		super(Artist, self).__init__(**kwargs)
+		self.user_type = kwargs['user_type']
+		self.my_id = kwargs['my_id']
 
 	
 	def create_design(self, title, artist_id, artist_name, price):
